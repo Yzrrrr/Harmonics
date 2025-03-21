@@ -1,0 +1,14 @@
+# ninja log v5
+1	865	1742212841759324186	CMakeFiles/project2.dir/native-lib.cpp.o	aa2c17fe09c4c1c4
+869	939	1742212841837185098	/Users/yizeren/AndroidSynth/app/build/intermediates/cxx/Debug/2k2y1623/obj/arm64-v8a/libproject2.so	59d42ced84f38cc8
+0	4	0	clean	d316ea1db9e11311
+0	4	0	clean	d316ea1db9e11311
+0	4	0	clean	d316ea1db9e11311
+3	794	1742213988532928226	CMakeFiles/project2.dir/native-lib.cpp.o	aa2c17fe09c4c1c4
+794	895	1742213988638306673	/Users/yizeren/AndroidSynth/app/build/intermediates/cxx/Debug/2k2y1623/obj/arm64-v8a/libproject2.so	59d42ced84f38cc8
+2	828	1742215329110607938	CMakeFiles/project2.dir/native-lib.cpp.o	aa2c17fe09c4c1c4
+828	941	1742215329227269119	/Users/yizeren/AndroidSynth/app/build/intermediates/cxx/Debug/2k2y1623/obj/arm64-v8a/libproject2.so	59d42ced84f38cc8
+4	774	1742215382648573306	CMakeFiles/project2.dir/native-lib.cpp.o	aa2c17fe09c4c1c4
+775	969	1742215382854601990	/Users/yizeren/AndroidSynth/app/build/intermediates/cxx/Debug/2k2y1623/obj/arm64-v8a/libproject2.so	59d42ced84f38cc8
+3	822	1742216976765874915	CMakeFiles/project2.dir/native-lib.cpp.o	aa2c17fe09c4c1c4
+822	929	1742216976875910751	/Users/yizeren/AndroidSynth/app/build/intermediates/cxx/Debug/2k2y1623/obj/arm64-v8a/libproject2.so	59d42ced84f38cc8

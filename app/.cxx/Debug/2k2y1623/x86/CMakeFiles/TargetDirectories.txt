@@ -1,0 +1,3 @@
+/Users/yizeren/AndroidSynth/app/.cxx/Debug/2k2y1623/x86/CMakeFiles/project2.dir
+/Users/yizeren/AndroidSynth/app/.cxx/Debug/2k2y1623/x86/CMakeFiles/edit_cache.dir
+/Users/yizeren/AndroidSynth/app/.cxx/Debug/2k2y1623/x86/CMakeFiles/rebuild_cache.dir

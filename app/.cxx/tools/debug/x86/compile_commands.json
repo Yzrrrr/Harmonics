@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/yizeren/AndroidSynth/app/.cxx/Debug/2k2y1623/x86",
+  "command": "/Users/yizeren/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=i686-none-linux-android30 --sysroot=/Users/yizeren/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dproject2_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -fopenmp=libomp -std=gnu++17 -o CMakeFiles/project2.dir/native-lib.cpp.o -c /Users/yizeren/AndroidSynth/app/src/main/cpp/native-lib.cpp",
+  "file": "/Users/yizeren/AndroidSynth/app/src/main/cpp/native-lib.cpp"
+}
+]

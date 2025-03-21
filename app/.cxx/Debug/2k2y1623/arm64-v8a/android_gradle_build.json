@@ -1,0 +1,58 @@
+{
+  "buildFiles": [
+    "/Users/yizeren/AndroidSynth/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/yizeren/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/yizeren/AndroidSynth/app/.cxx/Debug/2k2y1623/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/yizeren/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/yizeren/AndroidSynth/app/.cxx/Debug/2k2y1623/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "project2::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "project2",
+      "output": "/Users/yizeren/AndroidSynth/app/build/intermediates/cxx/Debug/2k2y1623/obj/arm64-v8a/libproject2.so",
+      "runtimeFiles": [
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libFLAC.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libfluidsynth-assetloader.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libgio-2.0.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libglib-2.0.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libgmodule-2.0.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libgobject-2.0.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libgthread-2.0.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libinstpatch-1.0.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/liboboe.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libogg.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libopus.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libpcre.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libpcreposix.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libsndfile.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libvorbis.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libvorbisenc.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libvorbisfile.so",
+        "/Users/yizeren/AndroidSynth/app/src/main/cpp/fluidsynth/lib/arm64-v8a/libfluidsynth.so",
+        "/Users/yizeren/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/lib/clang/18/lib/linux/aarch64/libomp.so"
+      ]
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/yizeren/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/yizeren/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

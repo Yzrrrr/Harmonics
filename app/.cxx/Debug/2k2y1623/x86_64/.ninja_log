@@ -1,0 +1,6 @@
+# ninja log v5
+0	357	1742213953803769321	CMakeFiles/project2.dir/native-lib.cpp.o	67c082abd5a30d20
+358	396	1742213953845394475	/Users/yizeren/AndroidSynth/app/build/intermediates/cxx/Debug/2k2y1623/obj/x86_64/libproject2.so	1f5b96014759aa6d
+0	4	0	clean	d316ea1db9e11311
+0	3	0	clean	d316ea1db9e11311
+0	6	0	clean	d316ea1db9e11311

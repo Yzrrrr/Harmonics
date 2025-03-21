@@ -1,0 +1,1 @@
+/Users/yizeren/AndroidSynth/app/src/main/cpp/CMakeLists.txt
