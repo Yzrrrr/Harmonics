@@ -72,8 +72,18 @@ class MusicViewModel : ViewModel() {
      * key = 循环内的十六分音符位置，value = 键盘上的音（midi）
      */
     val roll = mutableStateMapOf<Int, MutableSet<Int>>()
-    fun markRoll(step: Int, midi: Int) { roll.getOrPut(step) { mutableSetOf() }.add(midi); roll[step] = roll[step]!!.toMutableSet() }
-    fun clearRoll() { roll.clear() }
+
+    /** 录音开着时弹的，底层会在循环里回放；这里同步记一份，画成实墨的卷 */
+    val recorded = mutableStateMapOf<Int, MutableSet<Int>>()
+    private val _recording = MutableStateFlow(false)
+    val recording: StateFlow<Boolean> = _recording
+    fun setRecording(on: Boolean) { _recording.value = on }
+
+    fun markRoll(step: Int, midi: Int) {
+        roll[step] = (roll[step] ?: emptySet()).plus(midi).toMutableSet()
+        if (_recording.value) recorded[step] = (recorded[step] ?: emptySet()).plus(midi).toMutableSet()
+    }
+    fun clearRoll() { roll.clear(); recorded.clear() }
 
 }
 

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,20 +26,27 @@ import com.example.project2.FluidSynthManager
 import com.example.project2.ui.theme.Hair
 import com.example.project2.ui.theme.Ink
 import com.example.project2.ui.theme.Ink20
+import com.example.project2.ui.theme.Ink35
+import com.example.project2.ui.theme.Ink70
 import com.example.project2.ui.theme.Ink50
 import com.example.project2.ui.theme.Paper
 import com.example.project2.ui.theme.PaperWarm
 import com.example.project2.ui.theme.Small
 
-private data class Drum(val name: String, val note: Int, val vel: Int = 100)
+private data class Drum(val name: String, val note: Int)
 
 private val DRUMS = listOf(
     Drum("boom", 35), Drum("clap", 38), Drum("tom", 45), Drum("crash", 51), Drum("hats", 42),
 )
 
+/** 三档力度：轻、中、重。点一下升一档，重了再点就灭 */
+private val LEVEL_VEL = listOf(0, 55, 85, 115)
+private val LEVEL_INK = listOf(PaperWarm, Ink35, Ink70, Ink)
+
 /**
- * 鼓机：五行十六步的格。每行左边一个小字名，右边十六个格子分四拍；点亮的格是墨。
- * 播放头是一列：走到哪一步，那一列的空格变深一档，亮格闪成纸色，像被敲了一下。
+ * 鼓机：五行十六步的格。每行左边一个小字名，右边十六个格子分四拍。
+ * 格子有三档墨：轻、中、重，点一下升一档，重了再点就灭。
+ * 播放头是一列：走到哪一步，那一列的空格变深一档，亮格淡一下，像被敲了一下。
  */
 @Composable
 fun DrumSet(modifier: Modifier = Modifier, clock: Clock) {
@@ -65,8 +73,10 @@ private fun DrumRow(drum: Drum, playStep: Int) {
                     DrumStep(
                         modifier = Modifier.weight(1f).padding(start = if (sub == 0) 1.dp else 0.dp, end = 1.dp, top = 1.dp, bottom = 1.dp),
                         playing = step == playStep,
-                        onStart = { FluidSynthManager.setDrumNote(timeNum = step, note = drum.note, svel = drum.vel) },
-                        onStop = { FluidSynthManager.delDrumNote(timeNum = step, note = drum.note) },
+                        onLevel = { level ->
+                            FluidSynthManager.delDrumNote(timeNum = step, note = drum.note)
+                            if (level > 0) FluidSynthManager.setDrumNote(timeNum = step, note = drum.note, svel = LEVEL_VEL[level])
+                        },
                     )
                 }
             }
@@ -75,22 +85,23 @@ private fun DrumRow(drum: Drum, playStep: Int) {
 }
 
 @Composable
-private fun DrumStep(modifier: Modifier = Modifier, playing: Boolean, onStart: () -> Unit, onStop: () -> Unit) {
-    var on by remember { mutableStateOf(false) }
+private fun DrumStep(modifier: Modifier = Modifier, playing: Boolean, onLevel: (Int) -> Unit) {
+    var level by remember { mutableIntStateOf(0) }
+    val base = LEVEL_INK[level]
     val target = when {
-        on && playing -> Ink50
-        on -> Ink
+        level > 0 && playing -> base.copy(alpha = 0.55f)
         playing -> Ink20
-        else -> PaperWarm
+        else -> base
     }
     val fill by animateColorAsState(target, label = "step")
     Box(
         modifier
             .height(34.dp)
+            .background(PaperWarm)
             .background(fill)
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
-                on = !on
-                if (on) onStart() else onStop()
+                level = (level + 1) % 4
+                onLevel(level)
             },
     )
 }

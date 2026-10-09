@@ -43,6 +43,7 @@ import com.example.project2.ui.theme.ChromeStyle
 import com.example.project2.ui.theme.Hair
 import com.example.project2.ui.theme.Ink
 import com.example.project2.ui.theme.Ink20
+import com.example.project2.ui.theme.Ink35
 import com.example.project2.ui.theme.Ink50
 import com.example.project2.ui.theme.PaperWarm
 import com.example.project2.ui.theme.PickerSheet
@@ -165,24 +166,36 @@ private fun KeyStrip(modifier: Modifier, fill: Float, held: Boolean, chordTone: 
 }
 
 /**
- * 演奏卷：这一轮循环里按过的键。横轴是循环里的十六分音符，纵轴是键盘上的音，按过的是墨，
- * 播放头走到的那一列淡墨。( clear ) 时清掉。
+ * 卷：横轴是循环里的十六分音符，纵轴是键盘上的音。
+ * 录音开着时弹的是实墨——底层会在循环里一遍遍回放它们；没录的只是淡墨的影子，告诉你这一轮弹过什么。
+ * 播放头走到的那一列淡墨。( clear ) 把两层都清掉。
  */
 @Composable
 fun PerformanceRoll(midiNotes: List<Int>, loopSteps: Int, clock: Clock, viewModel: MusicViewModel) {
     val roll = viewModel.roll
+    val recorded = viewModel.recorded
+    val recording by viewModel.recording.collectAsState()
     val head = clock.position16.toInt() % loopSteps
-    Canvas(Modifier.fillMaxWidth().height((midiNotes.size * 4 + 2).dp.coerceAtMost(96.dp))) {
-        val cell = size.width / loopSteps
-        val row = size.height / midiNotes.size
-        drawRect(Hair, Offset(0f, 0f), Size(size.width, size.height))
-        drawRect(Ink20.copy(alpha = 0.35f), Offset(head * cell, 0f), Size(cell, size.height))
-        for (bar in 1 until loopSteps / 16) drawRect(Ink20, Offset(bar * 16 * cell, 0f), Size(1f, size.height))
-        roll.forEach { (step, notes) ->
-            notes.forEach { midi ->
+    Column {
+        Canvas(Modifier.fillMaxWidth().height((midiNotes.size * 4 + 2).dp.coerceAtMost(96.dp))) {
+            val cell = size.width / loopSteps
+            val row = size.height / midiNotes.size
+            val mark = { step: Int, midi: Int, color: androidx.compose.ui.graphics.Color ->
                 val r = midiNotes.indexOf(midi)
-                if (r >= 0) drawRect(Ink, Offset(step * cell + 1f, (midiNotes.size - 1 - r) * row + 1f), Size((cell - 2f).coerceAtLeast(1f), (row - 2f).coerceAtLeast(1f)))
+                if (r >= 0) drawRect(color, Offset(step * cell + 1f, (midiNotes.size - 1 - r) * row + 1f), Size((cell - 2f).coerceAtLeast(1f), (row - 2f).coerceAtLeast(1f)))
             }
+            drawRect(Hair, Offset(0f, 0f), Size(size.width, size.height))
+            drawRect(Ink20.copy(alpha = 0.35f), Offset(head * cell, 0f), Size(cell, size.height))
+            for (bar in 1 until loopSteps / 16) drawRect(Ink20, Offset(bar * 16 * cell, 0f), Size(1f, size.height))
+            roll.forEach { (step, notes) -> notes.forEach { midi -> if (recorded[step]?.contains(midi) != true) mark(step, midi, Ink35) } }
+            recorded.forEach { (step, notes) -> notes.forEach { midi -> mark(step, midi, Ink) } }
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Small(if (recording) "( recording )" else "( recorded )", color = if (recording) Ink else Ink50)
+            Small("${recorded.values.sumOf { it.size }} notes")
+            Spacer(Modifier.weight(1f))
+            Small("( played )", color = Ink35)
         }
     }
 }

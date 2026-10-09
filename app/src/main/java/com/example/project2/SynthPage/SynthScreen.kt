@@ -58,7 +58,7 @@ fun SynthScreen(
         )
 
         Column(Modifier.padding(horizontal = ChromeInset)) {
-            Transport(filepath = filepath, onClear = { musicViewModel.clearRoll() })
+            Transport(filepath = filepath, onClear = { musicViewModel.clearRoll() }, viewModel = musicViewModel)
             Spacer(Modifier.height(10.dp))
             Playhead(clock)
 

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.project2.FluidSynthManager
 import com.example.project2.ui.theme.ChromeStyle
 import com.example.project2.ui.theme.Hair
@@ -41,16 +43,16 @@ import java.io.File
  * 开着的那枚字转实墨、底下有线；没有红点，没有图标。
  */
 @Composable
-fun Transport(modifier: Modifier = Modifier, filepath: File, onClear: () -> Unit = {}) {
-    var recording by remember { mutableStateOf(false) }
+fun Transport(modifier: Modifier = Modifier, filepath: File, onClear: () -> Unit = {}, viewModel: MusicViewModel = viewModel()) {
+    val recording by viewModel.recording.collectAsState()
     var playing by remember { mutableStateOf(false) }
     var click by remember { mutableStateOf(false) }
     var saving by remember { mutableStateOf(false) }
 
     Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         LabelButton(text = "rec", active = recording, onClick = {
-            recording = !recording
-            if (recording) FluidSynthManager.startRecording() else FluidSynthManager.stopRecording()
+            viewModel.setRecording(!recording)
+            if (!recording) FluidSynthManager.startRecording() else FluidSynthManager.stopRecording()
         })
         LabelButton(text = if (playing) "stop" else "play", active = playing, onClick = {
             playing = !playing
