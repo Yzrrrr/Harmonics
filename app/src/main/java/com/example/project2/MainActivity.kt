@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -15,6 +16,8 @@ import androidx.compose.ui.Modifier
 import com.example.project2.ChatScreen.ChatViewModel
 import com.example.project2.SynthPage.MetronomeViewModel
 import com.example.project2.SynthPage.SynthScreen
+import com.example.project2.ui.theme.Paper
+import com.example.project2.ui.theme.PaperGrain
 import com.example.project2.ui.theme.Project2Theme
 import java.io.File
 import java.io.FileOutputStream
@@ -93,9 +96,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Project2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-                    if (filepath != null) {
+                Box(Modifier.fillMaxSize()) {
+                    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = Paper) { innerPadding ->
                         NavgationGraph(
                             modifier = Modifier.padding(innerPadding),
                             chatViewModel = chatViewModel,
@@ -104,6 +106,8 @@ class MainActivity : ComponentActivity() {
                             context = applicationContext
                         )
                     }
+                    // 颗粒压在所有内容上面，像印在成品上的胶片
+                    PaperGrain(Modifier.fillMaxSize())
                 }
             }
         }

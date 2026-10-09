@@ -38,6 +38,14 @@ class MusicViewModel : ViewModel() {
         _musicInfo.value = BasicMusicInfo(120, 4, 4, "C", "major")
     }
 
+    /** 键盘：有几个音、从第几个八度起。放在这里是因为段标题旁的步进器和键盘本身不在同一个组合函数里 */
+    private val _keyboardNotes = MutableStateFlow(12)
+    val keyboardNotes: StateFlow<Int> = _keyboardNotes
+    private val _keyboardOctave = MutableStateFlow(4)
+    val keyboardOctave: StateFlow<Int> = _keyboardOctave
+    fun updateKeyboardNotes(n: Int) { _keyboardNotes.value = n.coerceIn(1, 24) }
+    fun updateKeyboardOctave(o: Int) { _keyboardOctave.value = o.coerceIn(1, 8) }
+
 }
 
 

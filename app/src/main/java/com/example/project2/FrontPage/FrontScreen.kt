@@ -1,5 +1,8 @@
 package com.example.project2.FrontPage
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +44,14 @@ fun FrontScreen(
     onClickJumpToSynth: () -> Unit = {},
     onClickJumpToMusicGen: () -> Unit = {},
 ) {
+    // 开场：名字和三行目录依次从下面升起来，和站的 RevealLine 同一种呼吸
+    var shown by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { shown = true }
+    @Composable fun Modifier.rise(order: Int): Modifier {
+        val t by animateFloatAsState(if (shown) 1f else 0f, tween(700, delayMillis = 120 + order * 90, easing = FastOutSlowInEasing), label = "rise")
+        return graphicsLayer { alpha = t; translationY = (1f - t) * 28f * density }
+    }
+
     Column(modifier = modifier.fillMaxSize().background(Paper)) {
         ChromeRow(
             left = { Text("yzr", style = com.example.project2.ui.theme.ChromeStyle, color = Ink) },
@@ -43,14 +60,14 @@ fun FrontScreen(
         )
         Spacer(Modifier.weight(0.9f))
         Column(Modifier.padding(horizontal = ChromeInset)) {
-            Label("sound")
+            Label("sound", Modifier.rise(0))
             Spacer(Modifier.height(18.dp))
-            Text("harmonics", style = TitleStyle, color = Ink)
+            Text("harmonics", style = TitleStyle, color = Ink, modifier = Modifier.rise(1))
             Spacer(Modifier.height(44.dp))
-            Hairline()
-            IndexRow("01", stringResource(R.string.front_synth), onClickJumpToSynth)
-            IndexRow("02", stringResource(R.string.front_generate), onClickJumpToMusicGen)
-            IndexRow("03", stringResource(R.string.front_assistant), onClickJumpToAssistant)
+            Hairline(Modifier.rise(2))
+            IndexRow("01", stringResource(R.string.front_synth), onClickJumpToSynth, Modifier.rise(3))
+            IndexRow("02", stringResource(R.string.front_generate), onClickJumpToMusicGen, Modifier.rise(4))
+            IndexRow("03", stringResource(R.string.front_assistant), onClickJumpToAssistant, Modifier.rise(5))
         }
         Spacer(Modifier.weight(1.1f))
         ChromeRow(left = { Label("storyware") }, right = { Small("01 / 04") })

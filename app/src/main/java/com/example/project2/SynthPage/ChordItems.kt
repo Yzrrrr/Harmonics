@@ -1,11 +1,12 @@
 package com.example.project2.SynthPage
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,15 +27,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.project2.FluidSynthManager
 import com.example.project2.ui.theme.ChromeStyle
 import com.example.project2.ui.theme.Hair
 import com.example.project2.ui.theme.HeadingStyle
 import com.example.project2.ui.theme.Ink
-import com.example.project2.ui.theme.Ink50
+import com.example.project2.ui.theme.Ink20
 import com.example.project2.ui.theme.LabelButton
+import com.example.project2.ui.theme.Paper
 import com.example.project2.ui.theme.PaperDialog
 import com.example.project2.ui.theme.PaperWarm
 import com.example.project2.ui.theme.PickerSheet
@@ -49,37 +51,37 @@ import java.util.UUID
 
 val CHORD_TYPES = listOf("major", "minor", "7", "maj7", "m7")
 
-data class Chord(var root: String, var type: String, var beats: Int, var octave: Int, val id: String = UUID.randomUUID().toString())
+/** steps 以十六分音符计：4 步 = 一拍 */
+data class Chord(var root: String, var type: String, var steps: Int, var octave: Int, val id: String = UUID.randomUUID().toString())
 
 /** 和弦名：Cmaj7、Dm、G7 */
-fun chordName(root: String, type: String) = root + when (type) {
+fun chordName(root: String, type: String) = rootLabel(root) + when (type) {
     "major" -> ""
     "minor" -> "m"
     else -> type
 }
 
 /**
- * 一枚和弦：宽度按拍数，暖纸底、发丝线框，名字在左上、拍数在右下。长按拖动换序，点一下编辑。
+ * 时间线上的一块和弦：宽度按步数分摊整行，暖纸底、发丝线框；播放头走到它时整块变墨、字变纸色。
+ * 长按拖动换序，点一下编辑。
  */
 @Composable
-fun ChordItem(
-    chord: Chord,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
+fun ChordBlock(chord: Chord, width: Dp, current: Boolean, onClick: () -> Unit) {
+    val fill by animateColorAsState(if (current) Ink else PaperWarm, label = "chord")
+    val text by animateColorAsState(if (current) Paper else Ink, label = "chordText")
     Column(
-        modifier
-            .width((chord.beats * 22).dp.coerceAtLeast(72.dp))
+        Modifier
+            .width(width)
             .height(64.dp)
             .background(Hair)
             .padding(1.dp)
-            .background(PaperWarm)
+            .background(fill)
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClick)
             .padding(10.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(chordName(chord.root, chord.type), style = ChromeStyle, color = Ink)
-        Small("${chord.beats} · o${chord.octave}", Modifier.align(Alignment.End))
+        Text(chordName(chord.root, chord.type), style = ChromeStyle, color = text, maxLines = 1)
+        Small("${chord.steps / 4f}".removeSuffix(".0") + " beat", color = text.copy(alpha = 0.6f))
     }
 }
 
@@ -89,12 +91,12 @@ fun ChordItem(
 @Composable
 fun ChordDialog(
     initial: Chord,
-    onConfirm: (type: String, beats: Int, root: String, octave: Int) -> Unit,
+    onConfirm: (type: String, steps: Int, root: String, octave: Int) -> Unit,
     onDelete: (() -> Unit)?,
     onDismiss: () -> Unit,
 ) {
     var type by remember { mutableStateOf(initial.type) }
-    var beats by remember { mutableStateOf(initial.beats) }
+    var steps by remember { mutableStateOf(initial.steps) }
     var root by remember { mutableStateOf(initial.root) }
     var octave by remember { mutableStateOf(initial.octave) }
     var picking by remember { mutableStateOf<String?>(null) }
@@ -103,7 +105,7 @@ fun ChordDialog(
         title = "chord",
         onDismiss = onDismiss,
         actions = {
-            LabelButton("save", active = true, onClick = { onConfirm(type, beats, root, octave) })
+            LabelButton("save", active = true, onClick = { onConfirm(type, steps, root, octave) })
             if (onDelete != null) LabelButton("delete", onClick = onDelete)
             LabelButton("cancel", onClick = onDismiss)
         },
@@ -111,18 +113,18 @@ fun ChordDialog(
         Text(chordName(root, type), style = HeadingStyle, color = Ink)
         Spacer(Modifier.height(18.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(22.dp)) {
-            Field("root", root) { picking = "root" }
+            Field("root", rootLabel(root)) { picking = "root" }
             Field("type", type) { picking = "type" }
             Field("octave", octave.toString()) { picking = "octave" }
-            Field("beats", beats.toString()) { picking = "beats" }
+            Field("steps", steps.toString()) { picking = "steps" }
         }
     }
 
     when (picking) {
-        "root" -> PickerSheet("root", ROOTS, root, { root = it; picking = null }, { picking = null })
+        "root" -> PickerSheet("root", ROOTS, root, { root = it; picking = null }, { picking = null }, ::rootLabel)
         "type" -> PickerSheet("type", CHORD_TYPES, type, { type = it; picking = null }, { picking = null })
         "octave" -> PickerSheet("octave", (1..8).toList(), octave, { octave = it; picking = null }, { picking = null })
-        "beats" -> PickerSheet("beats", (1..16).toList(), beats, { beats = it; picking = null }, { picking = null })
+        "steps" -> PickerSheet("steps (4 = one beat)", (1..16).toList(), steps, { steps = it; picking = null }, { picking = null })
     }
 }
 
@@ -136,12 +138,12 @@ private fun Field(label: String, value: String, onClick: () -> Unit) {
 }
 
 /**
- * 和弦序列：一行可拖的和弦，末尾一枚 ( + chord )。
+ * 和弦时间线：上面一排刻度（每步一道，每拍一道长的），下面一行按步数分宽的和弦块，末尾 ( + chord )。
  * 序列一变就整条重写进合成器，和原来的逻辑一致。
  */
 @Composable
-fun VerticalReorderList(modifier: Modifier = Modifier) {
-    val chords = remember { mutableStateListOf(Chord("C", "maj7", 4, 4)) }
+fun ChordTimeline(modifier: Modifier = Modifier, clock: Clock) {
+    val chords = remember { mutableStateListOf(Chord("C", "maj7", 8, 4), Chord("A", "m7", 8, 4)) }
     var editing by remember { mutableStateOf<Chord?>(null) }
     var adding by remember { mutableStateOf(false) }
     val state = rememberReorderableLazyListState(onMove = { from, to ->
@@ -152,37 +154,61 @@ fun VerticalReorderList(modifier: Modifier = Modifier) {
         snapshotFlow { chords.map { it.copy() } }.collectLatest { updated ->
             FluidSynthManager.delAllChordNote()
             updated.forEachIndexed { index, chord ->
-                val timeNum = updated.take(index).sumOf { it.beats }
-                setChrod(getMidiFromRootNote(chord.root, chord.octave), chord.type, timeNum, svel = 60, clapOnCount = chord.beats)
+                val timeNum = updated.take(index).sumOf { it.steps }
+                setChrod(getMidiFromRootNote(chord.root, chord.octave), chord.type, timeNum, svel = 60, clapOnCount = chord.steps)
             }
         }
     }
 
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        LazyRow(
-            state = state.listState,
-            modifier = Modifier.weight(1f).reorderable(state).detectReorderAfterLongPress(state),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            items(chords, key = { it.id }) { chord ->
-                ReorderableItem(state, key = chord.id) { dragging ->
-                    val scale by animateFloatAsState(if (dragging) 1.04f else 1f, label = "drag")
-                    Box(Modifier.graphicsLayer { scaleX = scale; scaleY = scale }) {
-                        ChordItem(chord = chord, onClick = { editing = chord })
+    val total = chords.sumOf { it.steps }.coerceAtLeast(1)
+    val position = clock.position16 % total
+    val currentIndex = run {
+        var acc = 0
+        chords.indexOfFirst { acc += it.steps; position < acc }
+    }
+
+    Column(modifier.fillMaxWidth()) {
+        // 刻度
+        Row(Modifier.fillMaxWidth().height(10.dp), verticalAlignment = Alignment.Bottom) {
+            repeat(total) { i ->
+                Box(Modifier.weight(1f), contentAlignment = Alignment.BottomStart) {
+                    Box(Modifier.width(1.dp).height(if (i % 4 == 0) 10.dp else 4.dp).background(if (i % 4 == 0) Ink20 else Hair))
+                }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            val gap = 4.dp
+            val usable = maxWidth - gap * (chords.size - 1).coerceAtLeast(0)
+            LazyRow(
+                state = state.listState,
+                modifier = Modifier.fillMaxWidth().reorderable(state).detectReorderAfterLongPress(state),
+                horizontalArrangement = Arrangement.spacedBy(gap),
+            ) {
+                items(chords, key = { it.id }) { chord ->
+                    ReorderableItem(state, key = chord.id) { _ ->
+                        ChordBlock(
+                            chord = chord,
+                            width = usable * chord.steps / total,
+                            current = chords.indexOf(chord) == currentIndex,
+                            onClick = { editing = chord },
+                        )
                     }
                 }
             }
         }
-        Spacer(Modifier.width(16.dp))
-        LabelButton("+ chord", onClick = { adding = true })
+        Spacer(Modifier.height(6.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            LabelButton("+ chord", onClick = { adding = true })
+        }
     }
 
     editing?.let { chord ->
         ChordDialog(
             initial = chord,
-            onConfirm = { type, beats, root, octave ->
+            onConfirm = { type, steps, root, octave ->
                 val index = chords.indexOfFirst { it.id == chord.id }
-                if (index >= 0) chords[index] = chord.copy(type = type, beats = beats, root = root, octave = octave)
+                if (index >= 0) chords[index] = chord.copy(type = type, steps = steps, root = root, octave = octave)
                 editing = null
             },
             onDelete = { chords.removeAll { it.id == chord.id }; editing = null },
@@ -192,7 +218,7 @@ fun VerticalReorderList(modifier: Modifier = Modifier) {
     if (adding) {
         ChordDialog(
             initial = Chord("C", "maj7", 4, 4),
-            onConfirm = { type, beats, root, octave -> chords.add(Chord(root, type, beats, octave)); adding = false },
+            onConfirm = { type, steps, root, octave -> chords.add(Chord(root, type, steps, octave)); adding = false },
             onDelete = null,
             onDismiss = { adding = false },
         )

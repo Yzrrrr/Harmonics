@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.example.project2.FluidSynthManager
 import com.example.project2.ui.theme.Hair
 import com.example.project2.ui.theme.Ink
+import com.example.project2.ui.theme.Ink20
+import com.example.project2.ui.theme.Ink50
+import com.example.project2.ui.theme.Paper
 import com.example.project2.ui.theme.PaperWarm
 import com.example.project2.ui.theme.Small
 
@@ -34,37 +37,34 @@ private val DRUMS = listOf(
 )
 
 /**
- * 鼓组：五行十六步的格。每行左边一个小字名，右边十六个格子，
- * 每四格之间一条深一档的线标出拍。点亮的格是墨。
+ * 鼓机：五行十六步的格。每行左边一个小字名，右边十六个格子分四拍；点亮的格是墨。
+ * 播放头是一列：走到哪一步，那一列的空格变深一档，亮格闪成纸色，像被敲了一下。
  */
 @Composable
-fun DrumSet(modifier: Modifier = Modifier) {
+fun DrumSet(modifier: Modifier = Modifier, clock: Clock) {
+    val step = clock.step16
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Spacer(Modifier.width(52.dp))
             repeat(4) { beat ->
-                Small("${beat + 1}", Modifier.weight(1f).padding(start = if (beat == 0) 0.dp else 6.dp))
+                Small("${beat + 1}", Modifier.weight(1f).padding(start = if (beat == 0) 0.dp else 6.dp), color = if (beat == clock.beatInBar) Ink else Ink50)
             }
         }
-        DRUMS.forEach { drum -> DrumRow(drum) }
+        DRUMS.forEach { drum -> DrumRow(drum, step) }
     }
 }
 
 @Composable
-private fun DrumRow(drum: Drum) {
+private fun DrumRow(drum: Drum, playStep: Int) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Small(drum.name, Modifier.width(52.dp))
         repeat(4) { beat ->
-            Row(
-                Modifier
-                    .weight(1f)
-                    .padding(start = if (beat == 0) 0.dp else 6.dp)
-                    .background(Hair),
-            ) {
+            Row(Modifier.weight(1f).padding(start = if (beat == 0) 0.dp else 6.dp).background(Hair)) {
                 repeat(4) { sub ->
                     val step = beat * 4 + sub
                     DrumStep(
                         modifier = Modifier.weight(1f).padding(start = if (sub == 0) 1.dp else 0.dp, end = 1.dp, top = 1.dp, bottom = 1.dp),
+                        playing = step == playStep,
                         onStart = { FluidSynthManager.setDrumNote(timeNum = step, note = drum.note, svel = drum.vel) },
                         onStop = { FluidSynthManager.delDrumNote(timeNum = step, note = drum.note) },
                     )
@@ -75,12 +75,18 @@ private fun DrumRow(drum: Drum) {
 }
 
 @Composable
-private fun DrumStep(modifier: Modifier = Modifier, onStart: () -> Unit, onStop: () -> Unit) {
+private fun DrumStep(modifier: Modifier = Modifier, playing: Boolean, onStart: () -> Unit, onStop: () -> Unit) {
     var on by remember { mutableStateOf(false) }
-    val fill by animateColorAsState(if (on) Ink else PaperWarm, label = "step")
+    val target = when {
+        on && playing -> Ink50
+        on -> Ink
+        playing -> Ink20
+        else -> PaperWarm
+    }
+    val fill by animateColorAsState(target, label = "step")
     Box(
         modifier
-            .height(30.dp)
+            .height(34.dp)
             .background(fill)
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 on = !on

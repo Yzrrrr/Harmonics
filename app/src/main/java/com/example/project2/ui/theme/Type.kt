@@ -38,6 +38,12 @@ val ValueStyle = TextStyle(
     fontSize = 30.sp, lineHeight = 32.sp, letterSpacing = (-0.02).em, lineHeightStyle = tight,
 )
 
+/** 大值：速度、调。乐器上最大的字 */
+val DisplayStyle = TextStyle(
+    fontFamily = Grotesk, fontWeight = FontWeight.Medium,
+    fontSize = 64.sp, lineHeight = 60.sp, letterSpacing = (-0.04).em, lineHeightStyle = tight,
+)
+
 /** 大标题：首页的 harmonics */
 val TitleStyle = TextStyle(
     fontFamily = Grotesk, fontWeight = FontWeight.Medium,

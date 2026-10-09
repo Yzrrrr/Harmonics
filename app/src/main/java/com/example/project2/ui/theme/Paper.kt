@@ -26,8 +26,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -185,6 +191,29 @@ fun PaperDialog(
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(28.dp)) { actions() }
         }
     }
+}
+
+/**
+ * 纸的颗粒。和 yizeren.com 同一层：一张 160×160 的噪点图平铺在最上面，正片叠底，不吃触摸。
+ */
+@Composable
+fun PaperGrain(modifier: Modifier = Modifier) {
+    val noise = remember {
+        val size = 160
+        val pixels = IntArray(size * size)
+        val random = java.util.Random(7)
+        for (i in pixels.indices) {
+            val v = 200 + random.nextInt(56)
+            pixels[i] = (0xFF shl 24) or (v shl 16) or (v shl 8) or v
+        }
+        android.graphics.Bitmap.createBitmap(pixels, size, size, android.graphics.Bitmap.Config.ARGB_8888).asImageBitmap()
+    }
+    Box(
+        modifier.drawWithCache {
+            val brush = ShaderBrush(ImageShader(noise, TileMode.Repeated, TileMode.Repeated))
+            onDrawBehind { drawRect(brush, alpha = 0.07f, blendMode = BlendMode.Multiply) }
+        },
+    )
 }
 
 /** 标签 + 大值的一组：( bpm ) / 120 */
