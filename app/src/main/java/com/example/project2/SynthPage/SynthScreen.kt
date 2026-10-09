@@ -58,23 +58,23 @@ fun SynthScreen(
         )
 
         Column(Modifier.padding(horizontal = ChromeInset)) {
-            Transport(filepath = filepath)
+            Transport(filepath = filepath, onClear = { musicViewModel.clearRoll() })
             Spacer(Modifier.height(10.dp))
             Playhead(clock)
 
-            Spacer(Modifier.height(34.dp))
+            Spacer(Modifier.height(28.dp))
             BasicMusicInfoSet(viewModel = musicViewModel)
 
-            Section("keyboard")
-            Keyboards(modifier = Modifier.fillMaxWidth(), viewModel = musicViewModel)
+            Section("keyboard") { VoicePicker(viewModel = musicViewModel) }
+            Keyboards(modifier = Modifier.fillMaxWidth(), clock = clock, viewModel = musicViewModel)
             Spacer(Modifier.height(14.dp))
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { KeyboardSteppers() }
+            KeyboardSteppers(viewModel = musicViewModel)
 
             Section("drums")
             DrumSet(clock = clock)
 
             Section("chords")
-            ChordTimeline(clock = clock)
+            ChordTimeline(clock = clock, viewModel = musicViewModel)
 
             Spacer(Modifier.height(ChromeInset))
             Hairline()
@@ -88,9 +88,9 @@ fun SynthScreen(
 /** 段落标题：一条发丝线，下面左边一个括号标签，右边可以放这一段的小控件 */
 @Composable
 fun Section(name: String, trailing: (@Composable () -> Unit)? = null) {
-    Spacer(Modifier.height(30.dp))
+    Spacer(Modifier.height(24.dp))
     Hairline()
-    Spacer(Modifier.height(14.dp))
+    Spacer(Modifier.height(12.dp))
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Label(name)
         Spacer(Modifier.weight(1f))

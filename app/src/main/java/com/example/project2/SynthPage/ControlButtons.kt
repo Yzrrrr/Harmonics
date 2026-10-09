@@ -41,7 +41,7 @@ import java.io.File
  * 开着的那枚字转实墨、底下有线；没有红点，没有图标。
  */
 @Composable
-fun Transport(modifier: Modifier = Modifier, filepath: File) {
+fun Transport(modifier: Modifier = Modifier, filepath: File, onClear: () -> Unit = {}) {
     var recording by remember { mutableStateOf(false) }
     var playing by remember { mutableStateOf(false) }
     var click by remember { mutableStateOf(false) }
@@ -56,7 +56,7 @@ fun Transport(modifier: Modifier = Modifier, filepath: File) {
             playing = !playing
             if (playing) FluidSynthManager.startPlayback() else FluidSynthManager.stopPlayback()
         })
-        LabelButton(text = "clear", onClick = { FluidSynthManager.clearLoop() })
+        LabelButton(text = "clear", onClick = { FluidSynthManager.clearLoop(); onClear() })
         LabelButton(text = "click", active = click, onClick = {
             click = !click
             if (click) FluidSynthManager.turnMetronomeON() else FluidSynthManager.turnMetronomeOff()

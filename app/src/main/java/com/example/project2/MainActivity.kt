@@ -64,6 +64,7 @@ object FluidSynthManager {
     external fun getCount(): Double
     external fun SaveToWav(filename : String, Path : String)
     external fun destroyFluidSynthLoop()
+    external fun setProgram(channel: Int, program: Int)
 
     fun initialize() {
         createFluidSynth() // 初始化 FluidSynth

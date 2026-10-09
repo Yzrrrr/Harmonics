@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.project2.FluidSynthManager
 import com.example.project2.ui.theme.ChromeStyle
 import com.example.project2.ui.theme.Hair
@@ -142,8 +142,8 @@ private fun Field(label: String, value: String, onClick: () -> Unit) {
  * 序列一变就整条重写进合成器，和原来的逻辑一致。
  */
 @Composable
-fun ChordTimeline(modifier: Modifier = Modifier, clock: Clock) {
-    val chords = remember { mutableStateListOf(Chord("C", "maj7", 8, 4), Chord("A", "m7", 8, 4)) }
+fun ChordTimeline(modifier: Modifier = Modifier, clock: Clock, viewModel: MusicViewModel = viewModel()) {
+    val chords = viewModel.chords
     var editing by remember { mutableStateOf<Chord?>(null) }
     var adding by remember { mutableStateOf(false) }
     val state = rememberReorderableLazyListState(onMove = { from, to ->

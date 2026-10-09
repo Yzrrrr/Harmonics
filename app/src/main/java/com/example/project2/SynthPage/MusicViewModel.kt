@@ -1,5 +1,7 @@
 package com.example.project2.SynthPage
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.project2.FluidSynthManager
@@ -9,6 +11,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+data class Voice(val name: String, val program: Int)
+
+/** GeneralUser GS 里挑的十个：名字按乐手叫法 */
+val VOICES = listOf(
+    Voice("piano", 0), Voice("bright piano", 1), Voice("e-piano", 4), Voice("vibes", 11), Voice("organ", 16),
+    Voice("nylon guitar", 24), Voice("bass", 33), Voice("strings", 48), Voice("flute", 73), Voice("square lead", 80),
+)
 
 class MusicViewModel : ViewModel() {
     private val _musicInfo = MutableStateFlow(BasicMusicInfo(120, 4, 4, "C", "major"))
@@ -45,6 +55,25 @@ class MusicViewModel : ViewModel() {
     val keyboardOctave: StateFlow<Int> = _keyboardOctave
     fun updateKeyboardNotes(n: Int) { _keyboardNotes.value = n.coerceIn(1, 24) }
     fun updateKeyboardOctave(o: Int) { _keyboardOctave.value = o.coerceIn(1, 8) }
+
+    /** 键盘音色：GM program number */
+    private val _voice = MutableStateFlow(VOICES[1])
+    val voice: StateFlow<Voice> = _voice
+    fun updateVoice(v: Voice) {
+        _voice.value = v
+        FluidSynthManager.setProgram(1, v.program)
+    }
+
+    /** 和弦序列，键盘要知道现在走到哪个和弦 */
+    val chords = mutableStateListOf(Chord("C", "maj7", 8, 4), Chord("A", "m7", 8, 4), Chord("F", "maj7", 8, 4), Chord("G", "7", 8, 4))
+
+    /**
+     * 演奏卷：这一轮循环里在哪一步按了哪个键，UI 自己记的，和底层录音无关。
+     * key = 循环内的十六分音符位置，value = 键盘上的音（midi）
+     */
+    val roll = mutableStateMapOf<Int, MutableSet<Int>>()
+    fun markRoll(step: Int, midi: Int) { roll.getOrPut(step) { mutableSetOf() }.add(midi); roll[step] = roll[step]!!.toMutableSet() }
+    fun clearRoll() { roll.clear() }
 
 }
 

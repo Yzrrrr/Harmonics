@@ -636,3 +636,12 @@ Java_com_example_project2_FluidSynthManager_clearLoop(JNIEnv *env, jobject) {
     __android_log_print(ANDROID_LOG_DEBUG, "FluidSynth", "clearLoop");
 }
 
+
+
+// 换音色：GM program number，bank 不动。键盘在 1 通道，和弦在 8 通道。
+extern "C" JNIEXPORT void JNICALL
+Java_com_example_project2_FluidSynthManager_setProgram(JNIEnv *env, jobject /* this */, jint channel, jint program) {
+    if (synth != nullptr) {
+        fluid_synth_program_change(synth, channel, program);
+    }
+}
