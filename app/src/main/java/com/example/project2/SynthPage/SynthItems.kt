@@ -59,16 +59,16 @@ fun Keyboards(modifier: Modifier = Modifier, viewModel: MusicViewModel = viewMod
 
     Column(modifier) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(28.dp)) {
-            Stepper("keys", keyCount, 1, 24) { keyCount = it }
+            Stepper("notes", keyCount, 1, 24) { keyCount = it }
             Stepper("octave", octave, 1, 8) { octave = it }
             Spacer(Modifier.weight(1f))
-            Small("${info.root} ${scaleLabel(info.scale)}", Modifier.align(Alignment.CenterVertically))
+            Small("${info.root} ${scaleShort(info.scale)}", Modifier.align(Alignment.CenterVertically))
         }
         Spacer(Modifier.height(16.dp))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(190.dp)
+                .height(150.dp)
                 .onGloballyPositioned { size = it.size }
                 .pointerInteropFilter { event ->
                     val nx = if (size.width > 0) (event.x / size.width).coerceIn(0f, 0.999f) else 0f

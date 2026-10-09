@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.project2.FluidSynthManager
 import com.example.project2.ui.theme.Hair
-import com.example.project2.ui.theme.HairStrong
 import com.example.project2.ui.theme.Ink
 import com.example.project2.ui.theme.PaperWarm
 import com.example.project2.ui.theme.Small
@@ -60,15 +59,12 @@ private fun DrumRow(drum: Drum) {
                 Modifier
                     .weight(1f)
                     .padding(start = if (beat == 0) 0.dp else 6.dp)
-                    .background(if (beat == 0) Hair else HairStrong),
+                    .background(Hair),
             ) {
                 repeat(4) { sub ->
                     val step = beat * 4 + sub
                     DrumStep(
-                        modifier = Modifier.weight(1f).padding(
-                            start = if (sub == 0 && beat != 0) 1.dp else if (sub == 0) 1.dp else 0.dp,
-                            end = 1.dp, top = 1.dp, bottom = 1.dp,
-                        ),
+                        modifier = Modifier.weight(1f).padding(start = if (sub == 0) 1.dp else 0.dp, end = 1.dp, top = 1.dp, bottom = 1.dp),
                         onStart = { FluidSynthManager.setDrumNote(timeNum = step, note = drum.note, svel = drum.vel) },
                         onStop = { FluidSynthManager.delDrumNote(timeNum = step, note = drum.note) },
                     )

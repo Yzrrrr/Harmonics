@@ -27,8 +27,22 @@ val SCALES = listOf(
     "harmonic_minor", "melodic_minor", "phrygian", "lydian", "mixolydian", "locrian",
 )
 
-/** 音阶名显示：下划线换成空格 */
+/** 音阶全名：下划线换成空格，选项单里用 */
 fun scaleLabel(scale: String) = scale.replace('_', ' ')
+
+/** 音阶简写：大值那一格放不下全名，用乐手的缩写 */
+fun scaleShort(scale: String) = when (scale) {
+    "major" -> "maj"
+    "minor" -> "min"
+    "major_pentatonic" -> "maj pent"
+    "minor_pentatonic" -> "min pent"
+    "harmonic_minor" -> "harm min"
+    "melodic_minor" -> "mel min"
+    "phrygian" -> "phryg"
+    "mixolydian" -> "mixo"
+    "locrian" -> "locr"
+    else -> scale
+}
 
 /**
  * 四个值一行：( bpm ) 120 / ( clap ) 4 / ( root ) C / ( scale ) major。
@@ -47,7 +61,7 @@ fun BasicMusicInfoSet(modifier: Modifier = Modifier, viewModel: MusicViewModel =
             ValueField("bpm", info.BPM.toString(), Modifier.weight(1.1f)) { picking = "bpm" }
             ValueField("clap", info.clap.toString(), Modifier.weight(0.9f)) { picking = "clap" }
             ValueField("root", info.root, Modifier.weight(0.9f)) { picking = "root" }
-            ValueField("scale", scaleLabel(info.scale), Modifier.weight(1.6f)) { picking = "scale" }
+            ValueField("scale", scaleShort(info.scale), Modifier.weight(1.6f)) { picking = "scale" }
         }
         Spacer(Modifier.height(18.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(26.dp)) {

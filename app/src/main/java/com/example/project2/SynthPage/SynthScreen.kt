@@ -51,10 +51,10 @@ fun SynthScreen(modifier: Modifier = Modifier, metronomeViewModel: MetronomeView
             Spacer(Modifier.height(10.dp))
             BeatLine(viewModel = metronomeViewModel)
 
-            Section("key")
+            Rule()
             BasicMusicInfoSet()
 
-            Section("keys")
+            Section("keyboard")
             Keyboards(modifier = Modifier.fillMaxWidth())
 
             Section("drums")
@@ -70,6 +70,14 @@ fun SynthScreen(modifier: Modifier = Modifier, metronomeViewModel: MetronomeView
             Spacer(Modifier.height(ChromeInset))
         }
     }
+}
+
+/** 段落之间只有一条发丝线：下面的内容自带标签时用它 */
+@Composable
+fun Rule() {
+    Spacer(Modifier.height(30.dp))
+    Hairline()
+    Spacer(Modifier.height(26.dp))
 }
 
 /** 段落标题：一条发丝线，下面一个括号标签 */
