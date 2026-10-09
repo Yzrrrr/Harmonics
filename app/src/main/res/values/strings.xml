@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">project2</string>
-    <string name="get_start">不知道如何使用?\n试着问问DeepSeek！!</string>
-    <string name="start_with_demo_music">从创建你的Demo音乐开始</string>
-    <string name="start_with_only_text">使用我们的音乐生成模型...</string>
-    <string name="generated_music_output">生成音乐输出</string>
-    <string name="submit_and_generate">提交</string>
-    <string name="please_select_a_music_file_or_make_text_input_first">请选择一个参考音频或是文本输入</string>
-    <string name="describe_your_music">描述您的音乐需求（暂支持英文提示词）</string>
-    <string name="import_your_raw_music">输入您的源音频</string>
-    <string name="input">Input</string>
+    <string name="app_name">Harmonics</string>
+    <string name="front_assistant">assistant</string>
+    <string name="front_synth">synth</string>
+    <string name="front_generate">generate</string>
+    <string name="generated_music_output">生成结果</string>
+    <string name="submit_and_generate">generate</string>
+    <string name="please_select_a_music_file_or_make_text_input_first">先选一段参考音频，或写一句描述</string>
+    <string name="describe_your_music">描述这段音乐（目前只支持英文）</string>
+    <string name="import_your_raw_music">参考音频</string>
+    <string name="input">input</string>
 </resources>

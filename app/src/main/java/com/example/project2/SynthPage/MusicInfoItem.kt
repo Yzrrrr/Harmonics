@@ -1,18 +1,11 @@
 package com.example.project2.SynthPage
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,128 +13,54 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.project2.FluidSynthManager
+import com.example.project2.ui.theme.LabelButton
+import com.example.project2.ui.theme.PickerSheet
+import com.example.project2.ui.theme.ValueField
 
+val ROOTS = listOf("C", "#C", "D", "#D", "E", "F", "#F", "G", "#G", "A", "#A", "B")
+val SCALES = listOf(
+    "major", "minor", "blues", "dorian", "major_pentatonic", "minor_pentatonic",
+    "harmonic_minor", "melodic_minor", "phrygian", "lydian", "mixolydian", "locrian",
+)
 
+/** 音阶名显示：下划线换成空格 */
+fun scaleLabel(scale: String) = scale.replace('_', ' ')
+
+/**
+ * 四个值一行：( bpm ) 120 / ( clap ) 4 / ( root ) C / ( scale ) major。
+ * 点值弹选项单。下面一行是小节数：( 1 bar ) ( 2 bar ) ( 4 bar ) ( 8 bar )。
+ * 这就是整个乐器暴露出来的全部参数：节奏、和声、结构。
+ */
 @Composable
-fun BasicMusicInfoSet(modifier: Modifier = Modifier, viewModel:MusicViewModel = viewModel()) {
-    val musicInfo by viewModel.musicInfo.collectAsState()
+fun BasicMusicInfoSet(modifier: Modifier = Modifier, viewModel: MusicViewModel = viewModel()) {
+    val info by viewModel.musicInfo.collectAsState()
+    var picking by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(musicInfo) {
-        FluidSynthManager.setBasicMusicInfo(musicInfo.BPM, musicInfo.bar, musicInfo.clap)
+    LaunchedEffect(info) { FluidSynthManager.setBasicMusicInfo(info.BPM, info.bar, info.clap) }
+
+    Column(modifier.fillMaxWidth()) {
+        Row(Modifier.fillMaxWidth()) {
+            ValueField("bpm", info.BPM.toString(), Modifier.weight(1.1f)) { picking = "bpm" }
+            ValueField("clap", info.clap.toString(), Modifier.weight(0.9f)) { picking = "clap" }
+            ValueField("root", info.root, Modifier.weight(0.9f)) { picking = "root" }
+            ValueField("scale", scaleLabel(info.scale), Modifier.weight(1.6f)) { picking = "scale" }
+        }
+        Spacer(Modifier.height(18.dp))
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(26.dp)) {
+            listOf(1, 2, 4, 8).forEach { bars ->
+                LabelButton(text = "$bars bar", active = info.bar == bars, onClick = { viewModel.updateBar(bars) })
+            }
+        }
     }
 
-
-    Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
-    ){
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(1.dp)
-            ) {
-                Button(
-                    onClick = {
-                        viewModel.updateBar(1)
-                    }
-                ) { Text(text = "1 BAR") }
-                Button(
-                    onClick = {
-                        viewModel.updateBar(2)
-                    }
-                ) { Text(text = "2 BAR") }
-                Button(
-                    onClick = {
-                        viewModel.updateBar(4)
-                    }
-                ) { Text(text = "4 BAR") }
-                Button(
-                    onClick = {
-                        viewModel.updateBar(8)
-                    }
-                ) { Text(text = "8 BAR") }
-            }
-            Row(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(1.dp)
-            ){
-                DropdownMenu(
-                    text = "BPM: ${musicInfo.BPM}",
-                    menuItemData = (40..240).toList().map { it.toString() },
-                    OnClick = {
-                        viewModel.updateBPM(it.toInt())
-                    }
-                )
-                DropdownMenu(
-                    text = "Clap: ${musicInfo.clap}",
-                    menuItemData = (3..4).toList().map { it.toString() },
-                    OnClick = {
-                        viewModel.updateClap(it.toInt())
-                    }
-                )
-                DropdownMenu(
-                    text = "Root: ${musicInfo.root}",
-                    menuItemData = listOf("C", "#C", "D", "#D", "E", "F", "#F", "G", "#G", "A", "#A", "B"),
-                    OnClick = {
-                        viewModel.updateRoot(it)
-                    }
-                )
-                DropdownMenu(
-                    text = "Scale: ${musicInfo.scale}",
-                    menuItemData = listOf("major", "minor", "blues", "dorian","major_pentatonic","minor_pentatonic","harmonic_minor","melodic_minor","dorian","phrygian","lydian","mixolydian","locrian"),
-                    OnClick = {
-                        viewModel.updateScale(it)
-                    }
-                )
-            }
-        }
-
-    }
-}
-
-@Composable
-fun DropdownMenu(
-    modifier: Modifier = Modifier,
-    text :String,
-    menuItemData : List<String>,
-    OnClick : (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    // Placeholder list of 100 strings for demonstration
-
-    Box(
-        modifier = modifier
-            .padding(6.dp)
-    ) {
-        TextButton(
-            onClick = { expanded = !expanded }
-        ) {
-            Text(text = text)
-        }
-        androidx.compose.material3.DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            menuItemData.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = { OnClick(option) }
-                )
-            }
-        }
+    when (picking) {
+        "bpm" -> PickerSheet("bpm", (40..240).toList(), info.BPM, { viewModel.updateBPM(it); picking = null }, { picking = null })
+        "clap" -> PickerSheet("clap", listOf(3, 4), info.clap, { viewModel.updateClap(it); picking = null }, { picking = null })
+        "root" -> PickerSheet("root", ROOTS, info.root, { viewModel.updateRoot(it); picking = null }, { picking = null })
+        "scale" -> PickerSheet("scale", SCALES, info.scale, { viewModel.updateScale(it); picking = null }, { picking = null }, ::scaleLabel)
     }
 }

@@ -1,5 +1,9 @@
 package com.example.project2.MusicGenPage
 
+import com.example.project2.ui.theme.Ink
+import com.example.project2.ui.theme.Paper
+import com.example.project2.ui.theme.PaperWarm
+
 import android.content.ContentValues
 import android.content.Context
 import android.media.MediaPlayer
@@ -213,7 +217,7 @@ fun MusicGenerationScreen(context: Context) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color.White),
+            .background(Paper),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // 输入区域标题
@@ -232,11 +236,11 @@ fun MusicGenerationScreen(context: Context) {
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+            colors = ButtonDefaults.buttonColors(containerColor = PaperWarm)
         ) {
-            Text(text = stringResource(R.string.import_your_raw_music), color = Color.Black)
+            Text(text = stringResource(R.string.import_your_raw_music), color = Ink)
             Spacer(modifier = Modifier.width(8.dp))
-            Icon(Icons.Filled.Folder, contentDescription = "Import", tint = Color.Black)
+            Icon(Icons.Filled.Folder, contentDescription = "Import", tint = Ink)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -249,7 +253,7 @@ fun MusicGenerationScreen(context: Context) {
             LinearProgressIndicator(
                 progress = { progress },
                 modifier = Modifier.weight(1f),
-                color = Color.Black,
+                color = Ink,
             )
             IconButton(onClick = {
                 mediaPlayer?.let { player ->
@@ -281,8 +285,8 @@ fun MusicGenerationScreen(context: Context) {
             placeholder = { Text(stringResource(R.string.describe_your_music)) },
             shape = RoundedCornerShape(8.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
+                focusedContainerColor = Paper,
+                unfocusedContainerColor = Paper
             )
         )
 
@@ -302,9 +306,9 @@ fun MusicGenerationScreen(context: Context) {
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            colors = ButtonDefaults.buttonColors(containerColor = Ink)
         ) {
-            Text(text = stringResource(R.string.submit_and_generate), color = Color.White)
+            Text(text = stringResource(R.string.submit_and_generate), color = Paper)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -339,7 +343,7 @@ fun MusicGenerationScreen(context: Context) {
                 LinearProgressIndicator(
                     progress = { generatedProgress },
                     modifier = Modifier.weight(1f),
-                    color = Color.Blue,
+                    color = Ink,
                 )
                 IconButton(onClick = {
                     generatedMediaPlayer?.let { player ->
@@ -369,7 +373,7 @@ fun IndeterminateIndicator(viewModel: MusicGenViewModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         LinearProgressIndicator(
             modifier = Modifier.width(64.dp),
-            color = Color.Blue,
+            color = Ink,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
         Spacer(modifier = Modifier.height(4.dp))

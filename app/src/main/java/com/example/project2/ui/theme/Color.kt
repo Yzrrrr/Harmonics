@@ -2,11 +2,16 @@ package com.example.project2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+/** 纸与墨。和 yizeren.com 同一套色板，没有第三种颜色。 */
+val Paper = Color(0xFFFAFAF7)
+val PaperWarm = Color(0xFFF2F2EE)
+val Ink = Color(0xFF343632)
+val Ink70 = Color(0xFF555851)
+val Ink50 = Color(0xFF6F716D)
+val Ink35 = Color(0xFF979895)
+val Ink20 = Color(0xFFC9C9C6)
+val InkDeep = Color(0xFF20221F)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-val BubbleColor = Color(0xFF3B3B3B)
+/** 发丝线：墨 8%–12% */
+val Hair = Ink.copy(alpha = 0.10f)
+val HairStrong = Ink.copy(alpha = 0.22f)

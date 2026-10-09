@@ -1,5 +1,9 @@
 package com.example.project2.ChatScreen
 
+import com.example.project2.ui.theme.Ink
+import com.example.project2.ui.theme.Paper
+import com.example.project2.ui.theme.PaperWarm
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

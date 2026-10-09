@@ -1,5 +1,9 @@
 package com.example.project2.ChatScreen
 
+import com.example.project2.ui.theme.Ink
+import com.example.project2.ui.theme.Paper
+import com.example.project2.ui.theme.PaperWarm
+
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +42,7 @@ fun ChatScreen(modifier: Modifier = Modifier, viewModel: ChatViewModel) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.onBackground)
+            .background(color = Paper)
             .padding(4.dp)) {
         Column(
                 modifier = Modifier
@@ -71,7 +75,7 @@ fun IndeterminateIndicator(modifier: Modifier = Modifier,isGenerating: StateFlow
         horizontalAlignment = Alignment.CenterHorizontally) {
         LinearProgressIndicator(
             modifier = Modifier.width(64.dp),
-            color = Color.Blue,
+            color = Ink,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
         Spacer(modifier = Modifier.height(4.dp))
